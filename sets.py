@@ -115,4 +115,45 @@ def delete_set(set_name):
         print(f"Set '{set_name}' deleted successfully.")
     else:
         print(f"Set '{set_name}' does not exist!")
+
+def perform_operations():
+    while True: 
+        try:
+            print("-" * 30)
+            print("|Perform Operations:         |")
+            print("------------------------------")
+            print("|1. Union Set                |")
+            print("|2. Intersection Set         |")
+            print("|3. Complement Set           |")
+            print("|4. Difference Set           |")
+            print("|5. Symmetric Difference Set |")
+            print("|6. Disjoint Set             |")
+            print("|7. Exit Operations          |")
+            print("-" * 30)
+
+            operation_choice = int(input("Enter choice: "))
+            clear_screen()
+
+            if operation_choice == 1:
+                union_set()
+            elif operation_choice == 2:
+                intersection_set()
+            elif operation_choice == 3:
+                complement_set()
+            elif operation_choice == 4:
+                difference_set()
+            elif operation_choice == 5:
+                sym_difference()
+            elif operation_choice == 6:
+                disjoint_set()
+            elif operation_choice == 7:
+                print("Exiting Operations...")
+                clear_screen()
+                break
+            else:
+                print("Invalid choice. Please select a valid option.")
+
+        except ValueError:
+            print("Invalid input! Please enter a valid number for your choice.")
+
 main()
