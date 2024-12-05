@@ -24,33 +24,33 @@ def main():
             if choice == 1:
                 set_name = input("\nEnter name for set: ").strip().capitalize()
                 create_set(set_name)
-                display_all_sets()
+                display_all_sets(universal_set)
             elif choice == 2:
-                display_all_sets()
+                display_all_sets(universal_set)
                 set_name = input("\nEnter a set to put elements in: ").capitalize().strip()
                 print("Type 'ctrl' + 'd' to end inserting elements.")
                 while True:
                     try:
-                        element = input("Enter a element: ").strip()
+                        elements = input("Enter a element: ").strip()
                         add_elements(set_name, elements)
                     except EOFError:
                         break
             elif choice == 3:
-                display_all_sets()
+                display_all_sets(universal_set)
                 set_name = input("\nEnter a set to put elements in: ").capitalize().strip()
                 print("Type 'ctrl' + 'd' to end inserting elements.")
                 while True:
                     try:
-                        element = input("Enter a element to be deleted: ").strip()
+                        elements = input("Enter a element to be deleted: ").strip()
                         delete_elements(set_name, elements)
                     except EOFError:
                         break
             elif choice == 4:
-                display_all_sets()
+                display_all_sets(universal_set)
                 category = input("Enter set name to be deleted: ").strip().capitalize()
                 delete_set(set_name)
             elif choice == 5:
-                display_all_sets()
+                display_all_sets(universal_set)
             elif choice == 6:
                 perform_operations()
             elif choice == 7:
@@ -82,5 +82,14 @@ def clear_screen():
         os.system("cls")
     else:
         os.system("clear")
+
+def display_all_sets(universal_set):
+    print("\nCurrent sets and their elements:")
+    if not universal_set:
+        print("No sets available.")
+    else:
+        for name, set_items in universal_set.items():
+            print(f"{name}: {', '.join(set_items) if set_items else 'Empty'}")
+
 
 main()
