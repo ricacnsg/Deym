@@ -4,7 +4,7 @@ import platform
 universal_set = {}
 
 def main():
-    print("      TO DO APPLICATION")
+    print("      DEYM'S SET OPERATION")
     while True:
         try:
             print("-" * 30)
@@ -268,6 +268,33 @@ def disjoint_set():
     else:
         print("The selected sets are not disjoint (they have common elements).")
 
+def difference(set1, set2):
+    if set1 and set2 not in universal_set:
+        print(f"{set1} and {set2} is not found in universal set")
+        return
+    else:
+        difference_result = set(universal_set[set1]) - set(universal_set[set2])
+        print(f"The difference of set '{set1}' - set '{set2}' is: {difference_result}")
+        return difference_result
+
+def symmetric_difference(sets):
+    if not sets:
+        print("The provided list of sets is empty. Please provide valid sets.")
+        return
+
+    all_sets = [set(universal_set[s]) for s in sets if s in universal_set]
+    if len(all_sets) < len(sets):
+        print("One or more provided sets do not exist in the universal set.")
+        return
+
+    symmetric_diff_result = all_sets[0]  
+
+    for s in all_sets[1:]:
+        symmetric_diff_result = symmetric_diff_result.symmetric_difference(s)
+
+    print(f"The symmetric difference among the sets {', '.join(sets)} is: {symmetric_diff_result}")
+    return symmetric_diff_result
+
 def perform_operations():
     while True: 
         try:
@@ -293,9 +320,15 @@ def perform_operations():
             elif operation_choice == 3:
                 complement_set()
             elif operation_choice == 4:
-                difference_set()
+                display_all_sets(universal_set)
+                set1 = input("Enter set 1: ")
+                set2 = input("Enter set 2: ")
+                difference(set1, set2)
             elif operation_choice == 5:
-                sym_difference()
+                display_all_sets(universal_set)
+                sets = input("Enter the names of the sets (comma-separated): ").strip().split(',')
+                sets = [s.strip().capitalize() for s in sets]
+                symmetric_difference(sets)
             elif operation_choice == 6:
                 disjoint_set()
             elif operation_choice == 7:
