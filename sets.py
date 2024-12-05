@@ -1,5 +1,6 @@
 import os
 import platform
+
 universal_set = {}
 
 def main():
@@ -36,7 +37,7 @@ def main():
                 print("Type 'ctrl' + 'd' to end inserting elements.")
                 while True:
                     try:
-                        elements = input("Enter a element: ").strip()
+                        elements = input("Enter an element: ").strip()
                         add_elements(set_name, elements)
                     except EOFError:
                         break
@@ -130,7 +131,7 @@ def union_choice():
     elif choice == "2":
         for idx, (name, items) in enumerate(universal_set.items(), 1):
             print(f"{idx}. {name}: {', '.join(items) if items else 'Empty'}")
-            selected_sets = []
+        selected_sets = []
         while True:
             try:
                 set_choice = input("\nEnter the number of the set to union: ").strip()
@@ -152,10 +153,9 @@ def union_choice():
             
             except ValueError:
                 print("Invalid input. Please enter a valid set number or 'done'.")
-
             except EOFError:
                 break
-                    
+                
             select_union(selected_sets)
             print()
     else:
@@ -172,7 +172,6 @@ def union_all():
             union_of_all.update(set(set_items))
         print(f"U(Union) of all sets: {{{', '.join(union_of_all)}}}")
         print()
-    
 
 def select_union(selected_sets):
     if not selected_sets:
@@ -184,6 +183,90 @@ def select_union(selected_sets):
         union_of_selected_sets.update(set(universal_set[set_name]))
     
     print(f"Union of selected sets ({', '.join(selected_sets)}): {union_of_selected_sets}")
+
+# Intersection Set Functionality
+def intersection_set():
+    if not universal_set:
+        print("No sets available to perform intersection.")
+        return
+
+    print("\nAvailable sets for intersection: ")
+    display_all_sets(universal_set)
+
+    selected_sets = []
+    while True:
+        try:
+            set_choice = input("\nEnter the name of the set to intersect (or 'done' to finish): ").strip().capitalize()
+
+            if set_choice.lower() == 'done':
+                break
+            elif set_choice not in universal_set:
+                print(f"Set '{set_choice}' does not exist.")
+                continue
+
+            if set_choice not in selected_sets:
+                selected_sets.append(set_choice)
+                print(f"Set '{set_choice}' added for intersection.")
+            else:
+                print(f"Set '{set_choice}' already selected.")
+        except ValueError:
+            print("Invalid input! Please enter a valid set name.")
+
+    if len(selected_sets) < 2:
+        print("At least two sets are required for intersection.")
+        return
+
+    # Perform intersection
+    intersection_result = set(universal_set[selected_sets[0]])
+    for set_name in selected_sets[1:]:
+        intersection_result &= set(universal_set[set_name])
+
+    print(f"Intersection of selected sets ({', '.join(selected_sets)}): {intersection_result}")
+    print()
+
+# Disjoint Set Functionality (hindi pa final)
+def disjoint_set():
+    if len(universal_set) < 2:
+        print("At least two sets are required for this operation.")
+        return
+
+    print("\nAvailable sets for disjoint check: ")
+    display_all_sets(universal_set)
+
+    selected_sets = []
+    while True:
+        try:
+            set_choice = input("Enter a set name to include in the disjoint check (or type 'done' to finish): ").strip().capitalize()
+            if set_choice.lower() == 'done':
+                break
+            elif set_choice not in universal_set:
+                print(f"Set '{set_choice}' does not exist.")
+                continue
+
+            selected_sets.append(set_choice)
+        except ValueError:
+            print("Invalid input! Please enter a valid set name.")
+
+    if len(selected_sets) < 2:
+        print("You need to select at least two sets.")
+        return
+
+    # Check for disjoint sets
+    result = True
+    for i in range(len(selected_sets)):
+        for j in range(i+1, len(selected_sets)):
+            set1 = set(universal_set[selected_sets[i]])
+            set2 = set(universal_set[selected_sets[j]])
+            if set1 & set2:  # If the intersection is not empty, they are not disjoint
+                result = False
+                break
+        if not result:
+            break
+
+    if result:
+        print("The selected sets are disjoint.")
+    else:
+        print("The selected sets are not disjoint (they have common elements).")
 
 def perform_operations():
     while True: 
