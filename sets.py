@@ -37,14 +37,19 @@ def main():
                         break
             elif choice == 3:
                 display_all_sets(universal_set)
-                set_name = input("\nEnter a set to put elements in: ").capitalize().strip()
-                print("Type 'ctrl' + 'd' to end inserting elements.")
-                while True:
-                    try:
-                        elements = input("Enter a element to be deleted: ").strip()
-                        delete_elements(set_name, elements)
-                    except EOFError:
-                        break
+                set_name = input("\nEnter a set to remove elements from: ").capitalize().strip()
+                if set_name not in universal_set:
+                    print(f"Set '{set_name}' does not exist.")
+                else:
+                    print(f"Set '{set_name}' elements: {universal_set[set_name]}")
+                    while True:
+                        try:
+                            index = input("Enter the index of the element to remove (or type 'done' to stop): ").strip()
+                            if index.lower() == 'done':
+                                break
+                            print(delete_elements(set_name, index))
+                        except EOFError:
+                            break
             elif choice == 4:
                 display_all_sets(universal_set)
                 category = input("Enter set name to be deleted: ").strip().capitalize()
@@ -74,7 +79,7 @@ def add_elements(set_name, elements):
     if set_name not in universal_set:
         return f"Set '{set_name}' does not exist in the universal set."
 
-    universal_set[set_name] = [elements]
+    universal_set[set_name].append(elements)
     return f"Elements {elements} added to the set '{set_name}'."
 
 def clear_screen():
@@ -90,6 +95,19 @@ def display_all_sets(universal_set):
     else:
         for name, set_items in universal_set.items():
             print(f"{name}: {', '.join(set_items) if set_items else 'Empty'}")
+
+def delete_elements(set_name, index):
+    if set_name not in universal_set:
+        return f"Set '{set_name}' does not exist in the universal set."
+    
+    try:
+        index = int(index) 
+        removed_element = universal_set[set_name].pop(index)
+        return f"Element '{removed_element}' removed from the set '{set_name}'."
+    except ValueError:
+        return "Index must be a valid integer."
+    except IndexError:
+        return f"Invalid index. The set '{set_name}' has {len(universal_set[set_name])} elements."
 
 
 main()
