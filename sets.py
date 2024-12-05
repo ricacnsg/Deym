@@ -109,5 +109,10 @@ def delete_elements(set_name, index):
     except IndexError:
         return f"Invalid index. The set '{set_name}' has {len(universal_set[set_name])} elements."
 
-
+def delete_set(set_name):
+    if set_name in universal_set:
+        del universal_set[set_name]
+        print(f"Set '{set_name}' deleted successfully.")
+    else:
+        print(f"Set '{set_name}' does not exist!")
 main()
