@@ -1,3 +1,5 @@
+import os
+import platform
 universal_set = {}
 
 def main():
@@ -60,6 +62,20 @@ def main():
 
         except ValueError:
             print("Please enter a valid numeric choice.")
+
+def create_set(set_name):
+    if set_name in universal_set:
+        return f"The set '{set_name}' already exists in the universal set."
+    
+    universal_set[set_name] = []
+    return f"Set '{set_name}' added successfully!"
+
+def add_elements(set_name, elements):
+    if set_name not in universal_set:
+        return f"Set '{set_name}' does not exist in the universal set."
+
+    universal_set[set_name] = [elements]
+    return f"Elements {elements} added to the set '{set_name}'."
 
 def clear_screen():
     if platform.system() == "Windows":
