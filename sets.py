@@ -49,14 +49,25 @@ def main():
                     print(f"Set '{set_name}' does not exist.")
                 else:
                     print(f"Set '{set_name}' elements: {universal_set[set_name]}")
+                    
+                    # Display elements and their indices before asking for index
+                    print(f"\nCurrent Set '{set_name}':")
+                    print("-" * 30)
+                    print(f"{'Index':<10}{'Element':<20}")
+                    print("-" * 30)
+                    for i, el in enumerate(universal_set[set_name]):
+                        print(f"{i:<10}{el:<20}")
+                    print("-" * 30)
+                    
+                    # Loop to allow multiple deletions
+                    # Loop to allow multiple deletions
                     while True:
                         try:
-                            index = input("Enter the index of the element to remove (or type 'done' to stop): ").strip()
-                            if index.lower() == 'done':
-                                break
+                            index = input("Enter the index of the element to remove (Ctrl+D to stop): ").strip()
                             print(delete_elements(set_name, index))
-                        except EOFError:
-                            break
+                        except EOFError:  # This will catch Ctrl+D (EOF)
+                            print("\nExiting deletion process.")
+                            break  # Exit the loop on EOF (Ctrl+D)
             elif choice == 4:
                 display_all_sets(universal_set)
                 category = input("Enter set name to be deleted: ").strip().capitalize()
