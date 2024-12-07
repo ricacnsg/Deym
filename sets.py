@@ -257,32 +257,38 @@ def disjoint_set(selected_sets):
     else:
         print("\n\nThe selected sets are not disjoint (they have common elements).\n")
 
-def difference(set1, set2):
-    if set1 and set2 not in universal_set:
-        print(f"\n{set1} and {set2} is not found in universal set\n")
+def difference(set_names):
+    invalid_sets = [s for s in set_names if s not in universal_set]
+    if invalid_sets:
+        print(f"\nThe following sets were not found in the universal set: {', '.join(invalid_sets)}\n")
         return
-    else:
-        difference_result = set(universal_set[set1]) - set(universal_set[set2])
-        print(f"\nThe difference of set '{set1}' - set '{set2}' is: {difference_result}\n")
-        return difference_result
+
+    diff_result = set(universal_set[set_names[0]])
+    for s in set_names[1:]:
+        diff_result = diff_result.difference(set(universal_set[s]))
+
+    print(f"\nThe difference of sets {' - '.join(set_names)} is: {diff_result}\n")
+    return diff_result
 
 def symmetric_difference(sets):
     if not sets:
-        print("The provided list of sets is empty. Please provide valid sets.")
+        print("\nThe provided list of sets is empty. Please provide valid sets.\n")
         return
 
-    all_sets = [set(universal_set[s]) for s in sets if s in universal_set]
-    if len(all_sets) < len(sets):
-        print("One or more provided sets do not exist in the universal set.")
+    invalid_sets = [s for s in sets if s not in universal_set]
+    if invalid_sets:
+        print(f"\nThe following sets were not found in the universal set: {', '.join(invalid_sets)}\n")
         return
 
-    symmetric_diff_result = all_sets[0]  
+    all_sets = [set(universal_set[s]) for s in sets]
 
+    symmetric_diff_result = all_sets[0]
     for s in all_sets[1:]:
         symmetric_diff_result = symmetric_diff_result.symmetric_difference(s)
 
-    print(f"The symmetric difference among the sets {', '.join(sets)} is: {symmetric_diff_result}")
+    print(f"\nThe symmetric difference among the sets {', '.join(sets)} is: {symmetric_diff_result}\n")
     return symmetric_diff_result
+
 
 
 def complement_set(set_name):
@@ -342,8 +348,6 @@ def perform_operations():
                     return
 
                 intersection_set(selected_sets)
-
-
             elif operation_choice == 3:
                 print("\nAvailable sets for complement operation:")
                 display_all_sets(universal_set)
@@ -355,14 +359,34 @@ def perform_operations():
                     complement_set(set_name)
             elif operation_choice == 4:
                 display_all_sets(universal_set)
-                set1 = input("Enter set 1: ")
-                set2 = input("Enter set 2: ")
-                difference(set1, set2)
+                print("Enter set names one by one. Press 'Ctrl+D' when done.")
+                set_names = []
+                while True:
+                    try:
+                        set_name = input("Enter set name: ").strip().capitalize()
+                        set_names.append(set_name)
+                    except EOFError:
+                        break
+                if len(set_names) < 2:
+                    print("\nAt least two sets are required for the difference operation.\n")
+                else:
+                    difference(set_names)
             elif operation_choice == 5:
-                display_all_sets(universal_set)
-                sets = input("Enter the names of the sets (comma-separated): ").strip().split(',')
-                sets = [s.strip().capitalize() for s in sets]
-                symmetric_difference(sets)
+                    display_all_sets(universal_set)
+                    print("Enter the names of the sets one by one. Press 'Ctrl+D' when done.")
+                    sets = []
+                    while True:
+                        try:
+                            set_name = input("Enter set name: ").strip().capitalize()
+                            sets.append(set_name)
+                        except EOFError:
+                            print("\nInput stopped.")
+                            break
+
+                    if len(sets) < 2:
+                        print("\nAt least two sets are required for the symmetric difference operation.\n")
+                    else:
+                        symmetric_difference(sets)
             elif operation_choice == 6:
                 print("\nAvailable sets for disjoint check: ")
                 display_all_sets(universal_set)
