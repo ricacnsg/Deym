@@ -295,6 +295,28 @@ def symmetric_difference(sets):
     print(f"The symmetric difference among the sets {', '.join(sets)} is: {symmetric_diff_result}")
     return symmetric_diff_result
 
+
+def complement_set():
+    if not universal_set:
+        print("The universal set is empty. Cannot perform complement operation.")
+        return
+
+    print("\nAvailable sets for complement operation:")
+    display_all_sets(universal_set)
+
+    set_name = input("\nEnter the name of the set to find its complement: ").strip().capitalize()
+    if set_name not in universal_set:
+        print(f"Set '{set_name}' does not exist.")
+        return
+
+    # Calculate the complement
+    universal_elements = {item for subset in universal_set.values() for item in subset}
+    set_elements = set(universal_set[set_name])
+    complement_result = universal_elements - set_elements
+
+    print(f"The complement of set '{set_name}' is: {complement_result}")
+
+
 def perform_operations():
     while True: 
         try:
