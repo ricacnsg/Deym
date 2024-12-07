@@ -1,5 +1,6 @@
 import os
 import platform
+import time
 
 universal_set = {}
 
@@ -123,41 +124,48 @@ def delete_set(set_name):
         print(f"Set '{set_name}' does not exist!")
 
 def union_choice():
-    print("1.) Display union of all sets" +
-    "\n2.) Pick sets to Union)")
+    print(("-" * 31) +
+          "\n|Choose type of Union:        |\n" +
+          ("-" * 31) +
+          "\n|1.) Display union of all sets|" +
+          "\n|2.) Pick sets to Union)      |\n" +
+          ("-" * 31) )
     choice = input("Enter choice: ")
     if choice == "1":
         union_all()
+        clear_choice = input("Do you want to clear screen? [y/n] ").lower().strip()
+        if clear_choice == "y":
+            clear_screen()
     elif choice == "2":
-        for idx, (name, items) in enumerate(universal_set.items(), 1):
-            print(f"{idx}. {name}: {', '.join(items) if items else 'Empty'}")
+        print("\nAvailable sets:")
+        for name, items in universal_set.items():
+            print(f"{name}: {', '.join(items) if items else 'Empty'}")
+        
         selected_sets = []
-        while True:
-            try:
-                set_choice = input("\nEnter the number of the set to union: ").strip()
-                set_number = int(set_choice)
-
-                if set_number < 1 or set_number > len(universal_set):
-                    print(f"Invalid set number {set_number}. Please choose a valid number.")
+        print("\nEnter the name of the sets to union (Press Ctrl+D to finish):")
+        try:
+            while True:
+                set_name = input("Set name: ").strip()
+                
+                if set_name not in universal_set:
+                    print(f"Set '{set_name}' does not exist. Please enter a valid set name.\n")
                     continue
-
-                selected_set_name = list(universal_set.keys())[set_number - 1]
                 
-                if selected_set_name not in selected_sets:
-                    selected_sets.append(selected_set_name)
-                    print(f"Set '{selected_set_name}' added to union list.")
+                if set_name in selected_sets:
+                    print(f"Set '{set_name}' is already in the union list.")
                 else:
-                    print(f"Set '{selected_set_name}' is already in the union list.")
-
-                print()
-            
-            except ValueError:
-                print("Invalid input. Please enter a valid set number or 'done'.")
-            except EOFError:
-                break
-                
-            select_union(selected_sets)
-            print()
+                    selected_sets.append(set_name)
+        except EOFError:
+            print("")
+    
+        select_union(selected_sets)
+        clear_choice = input("\nDo you want to clear screen? [y/n] ").lower().strip()
+        if clear_choice == "y":
+            clear_screen()
+        elif clear_choice == "n":
+            pass
+        else:
+            print("Invalid option.\n")
     else:
         print("Invalid option.")
     return
@@ -170,7 +178,7 @@ def union_all():
         union_of_all = set()
         for set_name, set_items in universal_set.items():
             union_of_all.update(set(set_items))
-        print(f"U(Union) of all sets: {{{', '.join(union_of_all)}}}")
+        print(f"\nU(Union) of all sets: {{{', '.join(union_of_all)}}}")
         print()
 
 def select_union(selected_sets):
@@ -182,99 +190,51 @@ def select_union(selected_sets):
     for set_name in selected_sets:
         union_of_selected_sets.update(set(universal_set[set_name]))
     
-    print(f"Union of selected sets ({', '.join(selected_sets)}): {union_of_selected_sets}")
+    print(f"\nUnion of selected sets ({', '.join(selected_sets)}): {{{', '.join(union_of_selected_sets)}}}")
 
 # Intersection Set Functionality
-def intersection_set():
+def intersection_set(selected_sets):
     if not universal_set:
         print("No sets available to perform intersection.")
         return
 
-    print("\nAvailable sets for intersection: ")
-    display_all_sets(universal_set)
-
-    selected_sets = []
-    while True:
-        try:
-            set_choice = input("\nEnter the name of the set to intersect (or 'done' to finish): ").strip().capitalize()
-
-            if set_choice.lower() == 'done':
-                break
-            elif set_choice not in universal_set:
-                print(f"Set '{set_choice}' does not exist.")
-                continue
-
-            if set_choice not in selected_sets:
-                selected_sets.append(set_choice)
-                print(f"Set '{set_choice}' added for intersection.")
-            else:
-                print(f"Set '{set_choice}' already selected.")
-        except ValueError:
-            print("Invalid input! Please enter a valid set name.")
-
-    if len(selected_sets) < 2:
-        print("At least two sets are required for intersection.")
-        return
-
-    # Perform intersection
     intersection_result = set(universal_set[selected_sets[0]])
+
     for set_name in selected_sets[1:]:
         intersection_result &= set(universal_set[set_name])
 
-    print(f"Intersection of selected sets ({', '.join(selected_sets)}): {intersection_result}")
-    print()
+    formatted_result = ', '.join(str(item) for item in intersection_result)
+    print(f"\nIntersection of selected sets ({', '.join(selected_sets)}): {{{formatted_result}}}")
 
 # Disjoint Set Functionality (hindi pa final)
-def disjoint_set():
-    if len(universal_set) < 2:
-        print("At least two sets are required for this operation.")
-        return
-
-    print("\nAvailable sets for disjoint check: ")
-    display_all_sets(universal_set)
-
-    selected_sets = []
-    while True:
-        try:
-            set_choice = input("Enter a set name to include in the disjoint check (or type 'done' to finish): ").strip().capitalize()
-            if set_choice.lower() == 'done':
-                break
-            elif set_choice not in universal_set:
-                print(f"Set '{set_choice}' does not exist.")
-                continue
-
-            selected_sets.append(set_choice)
-        except ValueError:
-            print("Invalid input! Please enter a valid set name.")
-
+def disjoint_set(selected_sets):
     if len(selected_sets) < 2:
-        print("You need to select at least two sets.")
-        return
+                        print("You need to select at least two sets.")
+                        return
 
-    # Check for disjoint sets
     result = True
     for i in range(len(selected_sets)):
         for j in range(i+1, len(selected_sets)):
             set1 = set(universal_set[selected_sets[i]])
             set2 = set(universal_set[selected_sets[j]])
-            if set1 & set2:  # If the intersection is not empty, they are not disjoint
+            if set1 & set2: 
                 result = False
                 break
         if not result:
             break
 
     if result:
-        print("The selected sets are disjoint.")
+        print("\n\nThe selected sets are disjoint.")
     else:
-        print("The selected sets are not disjoint (they have common elements).")
+        print("\n\nThe selected sets are not disjoint (they have common elements).\n")
 
 def difference(set1, set2):
     if set1 and set2 not in universal_set:
-        print(f"{set1} and {set2} is not found in universal set")
+        print(f"\n{set1} and {set2} is not found in universal set\n")
         return
     else:
         difference_result = set(universal_set[set1]) - set(universal_set[set2])
-        print(f"The difference of set '{set1}' - set '{set2}' is: {difference_result}")
+        print(f"\nThe difference of set '{set1}' - set '{set2}' is: {difference_result}\n")
         return difference_result
 
 def symmetric_difference(sets):
@@ -296,25 +256,17 @@ def symmetric_difference(sets):
     return symmetric_diff_result
 
 
-def complement_set():
+def complement_set(set_name):
     if not universal_set:
         print("The universal set is empty. Cannot perform complement operation.")
         return
 
-    print("\nAvailable sets for complement operation:")
-    display_all_sets(universal_set)
-
-    set_name = input("\nEnter the name of the set to find its complement: ").strip().capitalize()
-    if set_name not in universal_set:
-        print(f"Set '{set_name}' does not exist.")
-        return
-
-    # Calculate the complement
     universal_elements = {item for subset in universal_set.values() for item in subset}
     set_elements = set(universal_set[set_name])
     complement_result = universal_elements - set_elements
 
-    print(f"The complement of set '{set_name}' is: {complement_result}")
+    formatted_result = ', '.join(str(item) for item in complement_result)
+    print(f"\nThe complement of set '{set_name}' is: {{{formatted_result}}}\n")
 
 
 def perform_operations():
@@ -338,9 +290,39 @@ def perform_operations():
             if operation_choice == 1:
                 union_choice()
             elif operation_choice == 2:
-                intersection_set()
+                print("\nAvailable sets for intersection: ")
+                display_all_sets(universal_set)
+                selected_sets = []
+                while True:
+                    try:
+                        set_choice = input("\nEnter the name of the set to intersect (Press Ctrl+D to finish): ", end = "").strip().capitalize()
+
+                        if set_choice not in universal_set:
+                            print(f"Set '{set_choice}' does not exist.")
+                            continue
+
+                        if set_choice not in selected_sets:
+                            selected_sets.append(set_choice)
+                        else:
+                            print(f"Set '{set_choice}' already selected.")
+                    except ValueError:
+                        print("Invalid input! Please enter a valid set name.")
+                    except EOFError:
+                        break
+
+                if len(selected_sets) < 2:
+                    print("At least two sets are required for intersection.")
+                    return
+                intersection_set(selected_sets)
             elif operation_choice == 3:
-                complement_set()
+                print("\nAvailable sets for complement operation:")
+                display_all_sets(universal_set)
+                set_name = input("\nEnter the name of the set to find its complement: ").strip().capitalize()
+                if set_name not in universal_set:
+                    print(f"Set '{set_name}' does not exist.")
+                    return
+                else:
+                    complement_set(set_name)
             elif operation_choice == 4:
                 display_all_sets(universal_set)
                 set1 = input("Enter set 1: ")
@@ -352,7 +334,32 @@ def perform_operations():
                 sets = [s.strip().capitalize() for s in sets]
                 symmetric_difference(sets)
             elif operation_choice == 6:
-                disjoint_set()
+                print("\nAvailable sets for disjoint check: ")
+                display_all_sets(universal_set)
+
+                selected_sets = []
+                while True:
+                    try:
+                        set_choice = input("Enter a set name to include in the disjoint check (Press Ctrl+D to finish): ").strip().capitalize()
+                        if set_choice not in universal_set:
+                            print(f"Set '{set_choice}' does not exist.")
+                            continue
+
+                        if set_choice not in selected_sets:
+                            selected_sets.append(set_choice)
+                        else:
+                            print(f"Set '{set_choice}' is already in the list.")
+                    except ValueError:
+                        print("\nInvalid input! Please enter a valid set name.")
+                    except EOFError:
+                        break
+
+                disjoint_set(selected_sets)
+                clear_choice = input("Do you want to clear screen? [y/n] ").lower().strip()
+                if clear_choice == "y":
+                    clear_screen()
+                elif clear_choice == "n":
+                    pass
             elif operation_choice == 7:
                 print("Exiting Operations...")
                 clear_screen()
