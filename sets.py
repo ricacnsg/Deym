@@ -71,7 +71,7 @@ def main():
             elif choice == 4:
                 display_all_sets(universal_set)
                 category = input("Enter set name to be deleted: ").strip().capitalize()
-                delete_set(set_name)
+                delete_set(category)
             elif choice == 5:
                 display_all_sets(universal_set)
             elif choice == 6:
@@ -204,18 +204,36 @@ def select_union(selected_sets):
     print(f"\nUnion of selected sets ({', '.join(selected_sets)}): {{{', '.join(union_of_selected_sets)}}}")
 
 # Intersection Set Functionality
+# Intersection Set Functionality
 def intersection_set(selected_sets):
-    if not universal_set:
-        print("No sets available to perform intersection.")
+    if not selected_sets:
+        print("No sets selected for intersection.")
         return
 
+    if len(selected_sets) < 2:
+        print("At least two sets are required for intersection.")
+        return
+
+    # Initialize intersection result as None (to check if it should be updated)
     intersection_result = set(universal_set[selected_sets[0]])
 
+    # Loop through selected sets and perform intersection
     for set_name in selected_sets[1:]:
-        intersection_result &= set(universal_set[set_name])
+        if set_name in universal_set:
+            intersection_result &= set(universal_set[set_name])
+        else:
+            print(f"Set '{set_name}' does not exist. Skipping this set.")
+            continue  # Skip to the next set
 
-    formatted_result = ', '.join(str(item) for item in intersection_result)
-    print(f"\nIntersection of selected sets ({', '.join(selected_sets)}): {{{formatted_result}}}")
+    if len(intersection_result) == 0:
+        print("No common elements found in the selected sets.")
+    else:
+        # Print the intersection result if found
+        formatted_result = ', '.join(str(item) for item in intersection_result)
+        print(f"\nIntersection of selected sets ({', '.join(selected_sets)}): {{{formatted_result}}}")
+
+
+
 
 # Disjoint Set Functionality (hindi pa final)
 def disjoint_set(selected_sets):
@@ -306,7 +324,7 @@ def perform_operations():
                 selected_sets = []
                 while True:
                     try:
-                        set_choice = input("\nEnter the name of the set to intersect (Press Ctrl+D to finish): ", end = "").strip().capitalize()
+                        set_choice = input("\nEnter the name of the set to intersect (Press Ctrl+D to finish): ").strip().capitalize()
 
                         if set_choice not in universal_set:
                             print(f"Set '{set_choice}' does not exist.")
@@ -316,15 +334,16 @@ def perform_operations():
                             selected_sets.append(set_choice)
                         else:
                             print(f"Set '{set_choice}' already selected.")
-                    except ValueError:
-                        print("Invalid input! Please enter a valid set name.")
                     except EOFError:
-                        break
+                        break  # Exiting input loop after Ctrl+D
 
                 if len(selected_sets) < 2:
                     print("At least two sets are required for intersection.")
                     return
+
                 intersection_set(selected_sets)
+
+
             elif operation_choice == 3:
                 print("\nAvailable sets for complement operation:")
                 display_all_sets(universal_set)
