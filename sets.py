@@ -331,8 +331,9 @@ def symmetric_difference(sets):
         print("\nThe provided list of sets is empty. Please provide valid sets.\n")
         return
     
-    if sets not in universal_set:
-        print(f"\nThe following sets were not found in the universal set." )
+    missing_sets = [s for s in sets if s not in universal_set]
+    if missing_sets:
+        print(f"\nThe following sets were not found in the universal set: {', '.join(missing_sets)}")
         return
 
     all_sets = [set(universal_set[s]) for s in sets]
@@ -343,7 +344,6 @@ def symmetric_difference(sets):
 
     print(f"\nThe symmetric difference among the sets {', '.join(sets)} is: {symmetric_diff_result}\n")
     return symmetric_diff_result
-
 
 
 def complement_set(set_name):
@@ -491,7 +491,6 @@ def perform_operations():
                             set_name = input("Enter set name for Symmetric Difference Operation: ").strip().capitalize()
                             sets.append(set_name)
                         except EOFError:
-                            print("\nInput stopped.")
                             break
 
                     if len(sets) < 2:
